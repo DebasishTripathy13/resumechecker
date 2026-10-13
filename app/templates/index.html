@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="hero">
+  <h1>Check your resume in seconds</h1>
+  <p class="muted">Upload a PDF to get an ATS-readiness score, section and content feedback,
+    and an optional keyword match against a job description.</p>
+</section>
+
+<form class="card upload-form" action="{{ url_for('main.analyze') }}" method="post"
+      enctype="multipart/form-data" id="upload-form">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+  <label class="dropzone" id="dropzone" for="resume">
+    <input type="file" id="resume" name="resume" accept="application/pdf,.pdf" required>
+    <span class="dropzone-icon" aria-hidden="true">&#8682;</span>
+    <span class="dropzone-text" id="dropzone-text">
+      <strong>Drop your resume here</strong> or click to browse
+    </span>
+    <span class="muted small">PDF only, up to {{ config.MAX_CONTENT_LENGTH // (1024 * 1024) }} MB</span>
+  </label>
+
+  <label class="field-label" for="job_description">
+    Job description <span class="muted">(optional)</span>
+  </label>
+  <textarea id="job_description" name="job_description" rows="7"
+            maxlength="{{ config.MAX_JOB_DESCRIPTION_CHARS }}"
+            placeholder="Paste the job posting to see which keywords you're missing..."></textarea>
+
+  <button type="submit" class="btn" id="submit-btn">Analyze resume</button>
+</form>
+
+<section class="features">
+  <div class="feature"><h3>ATS readability</h3><p class="muted">Detects image-only PDFs, length and layout issues.</p></div>
+  <div class="feature"><h3>Section check</h3><p class="muted">Finds Experience, Education, Skills and more.</p></div>
+  <div class="feature"><h3>Impact analysis</h3><p class="muted">Action verbs, metrics and weak phrasing.</p></div>
+  <div class="feature"><h3>Keyword match</h3><p class="muted">Compares your resume against a job posting.</p></div>
+</section>
+{% endblock %}

@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% block title %}Results - {{ report.filename }}{% endblock %}
+{% block content %}
+<section class="card summary">
+  <div class="score-ring grade-{{ report.grade | lower }}" data-score="{{ report.overall_score }}">
+    <div class="score-ring-inner">
+      <span class="score-value">{{ report.overall_score }}</span>
+      <span class="score-label">/ 100</span>
+    </div>
+  </div>
+  <div class="summary-text">
+    <p class="muted small">{{ report.filename }} &middot; {{ report.page_count }} page(s) &middot; {{ report.word_count }} words</p>
+    <h1>Grade {{ report.grade }}</h1>
+    <p>{{ report.verdict }}</p>
+    <a class="btn btn-secondary" href="{{ url_for('main.index') }}">Check another resume</a>
+  </div>
+</section>
+
+{% set suggestions = report.suggestions %}
+{% if suggestions %}
+<section class="card">
+  <h2>Top improvements</h2>
+  <ul class="findings">
+    {% for s in suggestions[:8] %}
+      <li class="finding finding-{{ s.level }}">{{ s.message }}</li>
+    {% endfor %}
+  </ul>
+</section>
+{% endif %}
+
+<section class="checks">
+  {% for check in report.checks %}
+  <article class="card check">
+    <header class="check-header">
+      <h2>{{ check.title }}</h2>
+      <span class="badge badge-{{ check.status }}">{{ check.score }}</span>
+    </header>
+    <div class="bar"><div class="bar-fill bar-{{ check.status }}" data-score="{{ check.score }}"></div></div>
+
+    <ul class="findings">
+      {% for f in check.findings %}
+        <li class="finding finding-{{ f.level }}">{{ f.message }}</li>
+      {% endfor %}
+    </ul>
+
+    {% if check.key == "sections" and check.details.found %}
+      <p class="small muted">Detected:</p>
+      <div class="chips">{% for s in check.details.found %}<span class="chip chip-good">{{ s | title }}</span>{% endfor %}</div>
+    {% elif check.key == "keywords" %}
+      {% set match = check.details.job_match %}
+      {% if match %}
+        {% if match.matched %}
+          <p class="small muted">Matched keywords:</p>
+          <div class="chips">{% for k in match.matched %}<span class="chip chip-good">{{ k }}</span>{% endfor %}</div>
+        {% endif %}
+        {% if match.missing %}
+          <p class="small muted">Missing keywords:</p>
+          <div class="chips">{% for k in match.missing %}<span class="chip chip-bad">{{ k }}</span>{% endfor %}</div>
+        {% endif %}
+      {% elif check.details.skills.technical %}
+        <p class="small muted">Skills detected:</p>
+        <div class="chips">{% for k in check.details.skills.technical %}<span class="chip">{{ k }}</span>{% endfor %}</div>
+      {% endif %}
+    {% elif check.key == "contact" %}
+      <dl class="kv">
+        {% for label, value in check.details.items() %}
+          <dt>{{ label | title }}</dt><dd>{{ value or "—" }}</dd>
+        {% endfor %}
+      </dl>
+    {% endif %}
+  </article>
+  {% endfor %}
+</section>
+
+<details class="card preview">
+  <summary>Extracted text (what an ATS sees)</summary>
+  <pre>{{ report.text_preview }}</pre>
+</details>
+{% endblock %}
