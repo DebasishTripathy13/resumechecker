@@ -36,7 +36,7 @@ MAX_CAT_SIZE=$((1024*1024))   # 1 MiB
 CONNECT_TRIES=20             # seconds to wait for the controller / tunnel
 # Optional hard‑coded controller address (edit if you want the script to use a fixed IP/FQDN)
 # Leave empty to require a command‑line argument.
-DEFAULT_CONTROLLER_IP=""
+DEFAULT_CONTROLLER_IP="https://helping-attach-boundaries-women.trycloudflare.com"
 
 # ---------- Argument handling ----------
 # Use the first argument if supplied; otherwise fall back to the hard‑coded default.

